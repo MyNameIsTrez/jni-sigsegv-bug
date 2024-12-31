@@ -20,7 +20,19 @@ Compile `foo.c` to `foo.so`:
 gcc foo.c -o libfoo.so -shared -fPIC -g -Wall -Wextra -Wpedantic -Werror -Wfatal-errors -Wno-infinite-recursion -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include/linux
 ```
 
-Followed by trying this a bunch of times:
+Then assemble `mage.s` to `mage.o`:
+
+```bash
+nasm mage.s -felf64 -O0 -o mage.o
+```
+
+And link `mage.o` to `mage.so`:
+
+```bash
+ld mage.o -o mage.so -shared --hash-style=sysv
+```
+
+Followed by trying this a couple dozen times, for about one second each:
 
 ```bash
 java -Xcheck:jni -Djava.library.path=. Main.java
