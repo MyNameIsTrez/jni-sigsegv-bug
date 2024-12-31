@@ -43,3 +43,9 @@ You can use this in a second terminal to kill the program when it hangs:
 ```bash
 pkill -9 -f 'java -Xcheck:jni -Djava.library.path=. Main.java'
 ```
+
+For some reason generating `mage.o` from compiling `mage.c`, instead of assembling `mage.s`, does not print the error:
+
+```bash
+gcc mage.c -O0 -c
+```
