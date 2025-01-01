@@ -29,7 +29,7 @@ nasm mage.s -felf64
 And link `mage.o` to `mage.so`:
 
 ```bash
-ld mage.o -o mage.so -shared --hash-style=sysv
+ld mage.o -o mage.so -shared
 ```
 
 Followed by running this a couple dozen times, for about one second each:
