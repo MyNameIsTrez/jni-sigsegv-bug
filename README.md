@@ -32,7 +32,7 @@ And link `mage.o` to `mage.so`:
 ld mage.o -o mage.so -shared --hash-style=sysv
 ```
 
-Followed by trying this a couple dozen times, for about one second each:
+Followed by running this a couple dozen times, for about one second each:
 
 ```bash
 java -Xcheck:jni -Djava.library.path=. Main.java
