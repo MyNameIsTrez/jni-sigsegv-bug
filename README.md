@@ -23,7 +23,7 @@ gcc foo.c -o libfoo.so -shared -fPIC -g -Wall -Wextra -Wpedantic -Werror -Wfatal
 Then assemble `mage.s` to `mage.o`:
 
 ```bash
-nasm mage.s -felf64 -O0 -o mage.o
+nasm mage.s -felf64
 ```
 
 And link `mage.o` to `mage.so`:
@@ -47,5 +47,5 @@ pkill -9 -f 'java -Xcheck:jni -Djava.library.path=. Main.java'
 For some reason generating `mage.o` from compiling `mage.c`, instead of assembling `mage.s`, does not print the error:
 
 ```bash
-gcc mage.c -O0 -c
+gcc mage.c -c
 ```
