@@ -12,7 +12,7 @@ class Main {
         init();
 
         long iteration = 0;
-        while (true) {
+        for (int i = 0; i < 2; i++) {
             System.out.println("Iteration: " + ++iteration);
             foo();
         }

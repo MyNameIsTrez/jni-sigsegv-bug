@@ -14,7 +14,7 @@ FATAL ERROR in native method: Static field ID passed to JNI
 ^CAborted (core dumped)
 ```
 
-Compile `foo.c` to `foo.so`:
+Compile `foo.c` to `foo.so` (you will need to replace the jdk include paths here with your own, by finding where your `jni.h` is):
 
 ```bash
 gcc foo.c -o libfoo.so -shared -fPIC -g -Wall -Wextra -Wpedantic -Werror -Wfatal-errors -Wno-infinite-recursion -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include/linux
