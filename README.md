@@ -14,7 +14,7 @@ FATAL ERROR in native method: Static field ID passed to JNI
 ^CAborted (core dumped)
 ```
 
-Compile `foo.c` to `foo.so` (you will need to replace the jdk include paths here with your own, by finding where your `jni.h` is):
+Compile `foo.c` to `foo.so` (you will need to replace the jdk include paths here with your own, which `ls /usr/lib/jvm` can help with):
 
 ```bash
 gcc foo.c -o libfoo.so -shared -fPIC -g -Wall -Wextra -Wpedantic -Werror -Wfatal-errors -Wno-infinite-recursion -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include -I/usr/lib/jvm/jdk-23.0.1-oracle-x64/include/linux
@@ -32,7 +32,7 @@ And link `mage.o` to `mage.so`:
 ld mage.o -o mage.so -shared
 ```
 
-Followed by running this a couple dozen times, for about one second each:
+Followed by running this a couple dozen times, until you see `FATAL ERROR in native method: Static field ID passed to JNI` being printed:
 
 ```bash
 java -Xcheck:jni -Djava.library.path=. Main.java
@@ -44,7 +44,7 @@ You can use this in a second terminal to kill the program when it hangs:
 pkill -9 -f 'java -Xcheck:jni -Djava.library.path=. Main.java'
 ```
 
-For some reason generating `mage.o` from compiling `mage.c`, instead of assembling `mage.s`, does not print the error:
+For some reason generating `mage.o` from compiling `mage.c`, instead of from assembling `mage.s`, never prints the error:
 
 ```bash
 gcc mage.c -c
