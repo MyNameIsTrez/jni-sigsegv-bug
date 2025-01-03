@@ -9,19 +9,19 @@
 
 jmp_buf jmp_buffer;
 
-// Accessing this from a handler is possibly undefined behavior,
-// but removing this does not impact the overall results anyways
 volatile pthread_t expected_thread;
 
 static void segv_handler(int sig) {
     (void)sig;
 
-    char msg[] = "In segv_handler()\n";
-    write(STDERR_FILENO, msg, sizeof(msg)-1);
+    {
+        char msg[] = "In segv_handler()\n";
+        write(STDERR_FILENO, msg, sizeof(msg)-1);
+    }
 
     if (!pthread_equal(pthread_self(), expected_thread)) {
-        char msg2[] = "Unexpected thread entered handler; exiting\n";
-        write(STDERR_FILENO, msg2, sizeof(msg2)-1);
+        char msg[] = "Unexpected thread entered handler; exiting\n";
+        write(STDERR_FILENO, msg, sizeof(msg)-1);
         _exit(EXIT_FAILURE);
     }
 
@@ -62,7 +62,7 @@ JNIEXPORT void JNICALL Java_Main_init(JNIEnv *env, jobject obj) {
         exit(EXIT_FAILURE);
     }
 
-	void *dll = dlopen("./mage.so", RTLD_NOW);
+    void *dll = dlopen("./mage.so", RTLD_NOW);
     if (!dll) {
         fprintf(stderr, "dlopen(): %s\n", dlerror());
     }
