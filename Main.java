@@ -1,5 +1,4 @@
 class Main {
-    private native void init();
     private native void foo();
 
     public static void main(String[] args) {
@@ -8,8 +7,6 @@ class Main {
 
     public void run() {
         System.loadLibrary("foo");
-
-        init();
 
         long iteration = 0;
         for (int i = 0; i < 2; i++) {

@@ -1,57 +1,28 @@
 #include <dlfcn.h>
 #include <jni.h>
-#include <pthread.h>
 #include <setjmp.h>
 #include <signal.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 jmp_buf jmp_buffer;
 
-volatile pthread_t expected_thread;
+static char *base;
+static char *top;
 
 static void segv_handler(int sig) {
     (void)sig;
-
-    {
-        char msg[] = "In segv_handler()\n";
-        write(STDERR_FILENO, msg, sizeof(msg)-1);
-    }
-
-    if (!pthread_equal(pthread_self(), expected_thread)) {
-        char msg[] = "Unexpected thread entered handler; exiting\n";
-        write(STDERR_FILENO, msg, sizeof(msg)-1);
-        _exit(EXIT_FAILURE);
-    }
-
     siglongjmp(jmp_buffer, 1);
 }
 
-JNIEXPORT void JNICALL Java_Main_init(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_Main_foo(JNIEnv *env, jobject obj) {
     (void)env;
     (void)obj;
-
-    fprintf(stderr, "Initializing...\n");
+    char b;
+    base = &b;
 
     struct sigaction sigsegv_sa = {
-        .sa_handler = segv_handler,
-        .sa_flags = SA_ONSTACK, // SA_ONSTACK gives SIGSEGV its own stack
+        .sa_handler = segv_handler
     };
-
-    // Handle stack overflow
-    // See https://stackoverflow.com/a/7342398/13279557
-    static char stack[SIGSTKSZ];
-    stack_t ss = {
-        .ss_size = SIGSTKSZ,
-        .ss_sp = stack,
-    };
-
-    if (sigaltstack(&ss, NULL) == -1) {
-        perror("sigaltstack");
-        exit(EXIT_FAILURE);
-    }
-
     if (sigfillset(&sigsegv_sa.sa_mask) == -1) {
         perror("sigfillset");
         exit(EXIT_FAILURE);
@@ -66,24 +37,16 @@ JNIEXPORT void JNICALL Java_Main_init(JNIEnv *env, jobject obj) {
     if (!dll) {
         fprintf(stderr, "dlopen(): %s\n", dlerror());
     }
-}
-
-void recurse() {
-    recurse();
-}
-
-JNIEXPORT void JNICALL Java_Main_foo(JNIEnv *env, jobject obj) {
-    (void)env;
-    (void)obj;
-
-    expected_thread = pthread_self();
 
     if (sigsetjmp(jmp_buffer, 1)) {
-        fprintf(stderr, "Jumped\n");
+        fprintf(stderr, "Jumped %p %p %ld\n", base, top, (base - top) / 1024);
         return;
     }
 
-    fprintf(stderr, "Recursing...\n");
-
-    recurse();
+    char c;
+    top = &c;
+    while (1) {
+        top--;
+        *top = 1;
+    }
 }

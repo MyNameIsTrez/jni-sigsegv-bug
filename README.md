@@ -34,17 +34,13 @@ And link `mage.o` to `mage.so`:
 ld mage.o -o mage.so -shared
 ```
 
-Followed by running this a couple dozen times, until you see `FATAL ERROR in native method: Static field ID passed to JNI` being printed:
+Finally we run `Main.java` in an infinite loop, which should eventually print `FATAL ERROR in native method: Static field ID passed to JNI`:
 
 ```bash
-java -Xcheck:jni -Djava.library.path=. Main.java
+while true; do java -Xcheck:jni -Djava.library.path=. Main.java; done
 ```
 
-You can use this in a second terminal to kill the program when it hangs:
-
-```bash
-pkill -9 -f 'java -Xcheck:jni -Djava.library.path=. Main.java'
-```
+Hitting `Ctrl`+`Z` a few times will suspend the loop, where you can then use `kill %%` to kill it.
 
 For some reason generating `mage.o` from compiling `mage.c`, instead of from assembling `mage.s`, never prints the error:
 
