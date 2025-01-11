@@ -37,7 +37,7 @@ ld mage.o -o mage.so -shared
 Finally we run `Main.java` in an infinite loop, which should eventually print `FATAL ERROR in native method: Static field ID passed to JNI`:
 
 ```bash
-while true; do java -Xcheck:jni -Djava.library.path=. Main.java; done
+while true; do java -Xcheck:jni -XX:+AllowUserSignalHandlers -Djava.library.path=. Main.java; done
 ```
 
 Hitting `Ctrl`+`Z` a few times will suspend the loop, where you can then use `kill %%` to kill it.
